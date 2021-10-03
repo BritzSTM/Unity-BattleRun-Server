@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "noImplicitAny": false,
-    "module": "CommonJS",
-    "lib": [ "es6", "es5", "es7" ],
-    "esModuleInterop": true,
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "lib": [ "es6", "es5", "es7", "ES2017" ],
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
