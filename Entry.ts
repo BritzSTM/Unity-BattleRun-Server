@@ -14,3 +14,4 @@ var _testAddAchivements = function () {
         }
     });
 }
+handlers["_testAddAchivements"] = _testAddAchivements;

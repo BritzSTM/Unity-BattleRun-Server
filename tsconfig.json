@@ -2,6 +2,8 @@
   "compilerOptions": {
     "noImplicitAny": false,
     "module": "CommonJS",
+    "lib": [ "es6", "es5", "es7" ],
+    "esModuleInterop": true,
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
