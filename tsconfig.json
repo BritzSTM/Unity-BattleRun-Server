@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "noImplicitAny": false,
-    "module": "System",
+    "module": "CommonJS",
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5"
+    "target": "ES2017"
   },
   "exclude": [
     "node_modules"

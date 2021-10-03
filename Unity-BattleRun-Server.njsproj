@@ -22,24 +22,25 @@
     <Content Include="Entry.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="Scripts\Entity.js" />
-    <Content Include="Scripts\Entity.js.map" />
+    <Content Include="Scripts\PlayFab\Entity.js" />
+    <Content Include="Scripts\PlayFab\Entity.js.map" />
     <Content Include="tsconfig.json">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\" />
-    <Folder Include="Scripts\typings\" />
-    <Folder Include="Scripts\typings\PlayFab\" />
+    <Folder Include="Scripts\PlayFab\" />
+    <Folder Include="Scripts\PlayFab\typings\" />
+    <Folder Include="Scripts\PlayFab\typings\PlayFab\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="PhotonRoomHook.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="Scripts\Entity.ts" />
-    <TypeScriptCompile Include="Scripts\typings\PlayFab\CloudScript.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\PlayFab\PlayStream.d.ts" />
+    <TypeScriptCompile Include="Scripts\PlayFab\Entity.ts" />
+    <TypeScriptCompile Include="Scripts\PlayFab\typings\PlayFab\CloudScript.d.ts" />
+    <TypeScriptCompile Include="Scripts\PlayFab\typings\PlayFab\PlayStream.d.ts" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
