@@ -539,7 +539,8 @@ var Achivements;
             }
         });
     };
-    Achivements.InitAchivements = function (cats) {
+    Achivements.InitAchivements = function (args) {
+        var cats = args;
         var datas = {};
         for (var i = 0; i < cats.length; ++i) {
             datas[cats[i]] = MAX_BITS_STRING;
