@@ -59,3 +59,7 @@ var RoomEventRaised = function (args: IPhotonRequest): IPhotonResult {
     return { ResultCode : 0, Message: 'Success' };
 };
 handlers["RoomEventRaised"] = RoomEventRaised;
+
+
+declare var HelpComment;
+HelpComment = "ABC";

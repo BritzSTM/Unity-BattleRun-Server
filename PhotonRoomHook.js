@@ -40,4 +40,5 @@ var RoomEventRaised = function (args) {
     return { ResultCode: 0, Message: 'Success' };
 };
 handlers["RoomEventRaised"] = RoomEventRaised;
+HelpComment = "ABC";
 //# sourceMappingURL=PhotonRoomHook.js.map

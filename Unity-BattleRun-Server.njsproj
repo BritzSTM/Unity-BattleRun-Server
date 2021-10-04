@@ -35,6 +35,9 @@
     <Folder Include="Scripts\PlayFab\typings\PlayFab\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Achivements.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="PhotonRoomHook.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

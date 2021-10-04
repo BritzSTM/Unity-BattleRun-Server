@@ -11,8 +11,5 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean"
-  },
-  "dependencies": {
-    "bitset": "^5.1.1"
   }
 }
