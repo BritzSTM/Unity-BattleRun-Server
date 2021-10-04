@@ -1493,12 +1493,14 @@ namespace Achivements
     /*
      * impl codes
      */
+    const MAX_BITS = 1024;
+    const MAX_BITS_STRING = "0".repeat(MAX_BITS);
 
     export var _testAddAchivements = function () {
         var set = new BitSet;
         set.set(64, 1);
 
-        let formated = ("0".repeat(1024) + set.toString()).slice(-1024);
+        let formated = ("0".repeat(MAX_BITS) + set.toString()).slice(-1024);
 
         var updateUserDataResult = server.UpdateUserReadOnlyData({
             PlayFabId: currentPlayerId,
@@ -1508,6 +1510,20 @@ namespace Achivements
             }
         });
     }
+
+    export var InitAchivements = function (cats: Array<string>) {
+        var datas = {};
+        for (var i = 0; i < cats.length; ++i) {
+            datas[cats[i]] = MAX_BITS_STRING;
+        }
+
+        var updateUserDataResult = server.UpdateUserReadOnlyData({
+            PlayFabId: currentPlayerId,
+            Permission: "Public",
+            Data: datas
+        });
+    }
 }
 
 handlers["_testAddAchivements"] = Achivements._testAddAchivements;
+handlers["InitAchivements"] = Achivements.InitAchivements;

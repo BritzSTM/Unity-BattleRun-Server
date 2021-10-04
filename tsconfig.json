@@ -5,7 +5,7 @@
     "moduleResolution": "Node",
     "lib": [ "es6", "es5", "es7", "ES2017" ],
     "noEmitOnError": true,
-    "removeComments": false,
+    "removeComments": true,
     "sourceMap": true,
     "target": "ES2017"
   },
