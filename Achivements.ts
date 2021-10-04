@@ -1513,6 +1513,7 @@ namespace Achivements
 
     export var InitAchivements = function (args: Array<string>) {
         var cats: Array<string> = args;
+
         var datas = {};
         for (var i = 0; i < cats.length; ++i) {
             datas[cats[i]] = MAX_BITS_STRING;
