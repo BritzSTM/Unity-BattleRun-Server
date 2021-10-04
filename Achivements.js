@@ -1,5 +1,8 @@
 var Achivements;
 (function (Achivements) {
+    /**
+     * Embedded bitset package
+     */
     'use strict';
     /**
      * The number of bits of a word
@@ -544,11 +547,11 @@ var Achivements;
             else {
                 if ((2 > base || base > 36))
                     throw SyntaxError('Invalid base');
-                //var ret: Array<string>;
+                //var ret = [];
                 var res;
                 var arr = [];
                 // Copy every single bit to a new array
-                for (var ii = data.length; ii--;) {
+                for (var i = data.length; i--;) {
                     for (var j = WORD_LENGTH; j--;) {
                         arr.push(data[i] >>> j & 1);
                     }
@@ -794,6 +797,9 @@ var Achivements;
         s['_'] = 0;
         return s;
     };
+    /*
+     * impl codes
+     */
     Achivements._testAddAchivements = function () {
         var set = new BitSet;
         set.set(64, 1);

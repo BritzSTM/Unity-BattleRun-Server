@@ -1,5 +1,9 @@
 namespace Achivements
 {
+    /** 
+     * Embedded bitset package
+     */
+
     declare interface ReadOnlyBitSet {
         /**
          * Creates the bitwise AND of two sets.
@@ -1173,12 +1177,12 @@ namespace Achivements
                 if ((2 > base || base > 36))
                     throw SyntaxError('Invalid base');
 
-                //var ret: Array<string>;
+                //var ret = [];
                 var res: Array<string>;
                 var arr = [];
-                        
+                
                 // Copy every single bit to a new array
-                for (var ii = data.length; ii--;) {
+                for (var i : number = data.length; i--;) {
 
                     for (var j = WORD_LENGTH; j--;) {
 
@@ -1483,6 +1487,12 @@ namespace Achivements
         s['_'] = 0;
         return s;
     };
+
+
+
+    /*
+     * impl codes
+     */
 
     export var _testAddAchivements = function () {
         var set = new BitSet;
