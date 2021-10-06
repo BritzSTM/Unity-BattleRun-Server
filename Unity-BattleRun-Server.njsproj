@@ -19,6 +19,12 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="Datas\TitleDatas.json">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Datas\TitleDatas.md">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Entry.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -29,16 +35,21 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Datas\" />
+    <Folder Include="Modules\" />
     <Folder Include="Scripts\" />
     <Folder Include="Scripts\PlayFab\" />
     <Folder Include="Scripts\PlayFab\typings\" />
     <Folder Include="Scripts\PlayFab\typings\PlayFab\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Achivements.ts">
+    <TypeScriptCompile Include="Modules\Achivements.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="PhotonRoomHook.ts">
+    <TypeScriptCompile Include="Modules\PhotonRoomHook.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="Modules\WeeklyRewardCoins.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="Scripts\PlayFab\Entity.ts" />
