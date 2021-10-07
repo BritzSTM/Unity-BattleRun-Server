@@ -4,16 +4,20 @@ namespace Login {
     import GetUserDataResult = PlayFabServerModels.GetUserDataResult;
     import UpdateUserDataRequest = PlayFabServerModels.UpdateUserDataRequest;
     import UpdateUserDataResult = PlayFabServerModels.UpdateUserDataResult;
+    import GetPlayerProfileRequest = PlayFabServerModels.GetPlayerProfileRequest;
+    import GetPlayerProfileResult = PlayFabServerModels.GetPlayerProfileResult;
+    import PlayerProfileViewConstraints = PlayFabServerModels.PlayerProfileViewConstraints;
 
+    // constants
     const LOGIN_TRACKING_KEY: string = "LOGIN_TRACKING";
 
-    var CreateLoginTrackingDataAndToJson = function (): string {
+    var CreateLoginTrackingData = function (): LoginTracking {
         var ltData: LoginTracking = {
             TotalLoginCount: 1,
             ContinuousLoginCount: 1
         }
 
-        return JSON.stringify(ltData);
+        return ltData;
     }
 
     var UpdateLoginTrackingData = function (data): void {
@@ -27,6 +31,22 @@ namespace Login {
         server.UpdateUserReadOnlyData(updateUserRODataReq);
     }
 
+    var GetDiffDaysFromLastLogin = function (): number {
+        var pcs: PlayerProfileViewConstraints;
+        pcs.ShowLastLogin = true;
+
+        var getPlayerPFReq: GetPlayerProfileRequest = {
+            PlayFabId: currentPlayerId,
+            ProfileConstraints: pcs
+        }
+
+        var profileRes = server.GetPlayerProfile(getPlayerPFReq);
+        var lastLoginDate = new Date(profileRes.PlayerProfile.LastLogin).getTime();
+        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
+
+        return diffDay;
+    }
+
     export var CheckIn = function (arg): LoginResult {
         var GetUserRODataReq: GetUserDataRequest = {
             PlayFabId: currentPlayerId,
@@ -36,13 +56,28 @@ namespace Login {
         var loginRes: LoginResult = { FirstLogin: false }
         var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(GetUserRODataReq);
 
+        // 첫 로그인
         if (!userRODataRes.Data.hasOwnProperty(LOGIN_TRACKING_KEY)) {
-            var ltData = CreateLoginTrackingDataAndToJson();
+            var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
             loginRes.FirstLogin = true;
 
             return loginRes;
         }
+
+        var trackingData: LoginTracking = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
+        var diffDay = GetDiffDaysFromLastLogin();
+        if (diffDay > 1.0) {
+            trackingData.ContinuousLoginCount = 1;
+            ++trackingData.TotalLoginCount;
+        }
+
+        UpdateLoginTrackingData(trackingData);
+
+        server.WriteTitleEvent({
+            EventName: "login_check_in",
+            Body: trackingData
+        });
 
         return loginRes;
     }
