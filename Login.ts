@@ -64,7 +64,7 @@ namespace Login {
 
             server.WriteTitleEvent({
                 EventName: "login_check_in_first",
-                Body: trackingData
+                Body: { TrackingData: trackingData }
             });
 
             return loginRes;
@@ -81,7 +81,10 @@ namespace Login {
 
         server.WriteTitleEvent({
             EventName: "login_check_in",
-            Body: trackingData
+            Body: {
+                TrackingData: trackingData,
+                DiffDay: diffDay
+            }
         });
 
         return loginRes;
