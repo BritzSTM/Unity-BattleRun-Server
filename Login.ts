@@ -62,6 +62,11 @@ namespace Login {
             UpdateLoginTrackingData(ltData);
             loginRes.FirstLogin = true;
 
+            server.WriteTitleEvent({
+                EventName: "login_check_in_first",
+                Body: trackingData
+            });
+
             return loginRes;
         }
 
