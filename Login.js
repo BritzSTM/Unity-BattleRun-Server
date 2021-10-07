@@ -3,8 +3,9 @@ var Login;
     const LOGIN_TRACKING_KEY = "LOGIN_TRACKING";
     var CreateLoginTrackingData = function () {
         var ltData = {
+            LastLogin: new Date(),
             TotalLoginCount: 1,
-            ContinuousLoginCount: 1
+            ContinuousLoginCount: 1,
         };
         return ltData;
     };
@@ -40,14 +41,17 @@ var Login;
             var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
             loginRes.FirstLogin = true;
-            server.WriteTitleEvent({
+            server.WritePlayerEvent({
+                PlayFabId: currentPlayerId,
                 EventName: "login_check_in_first",
                 Body: { TrackingData: trackingData }
             });
             return loginRes;
         }
         var trackingData = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var diffDay = GetDiffDaysFromLastLogin();
+        var lastLoginDate = new Date(trackingData.LastLogin).getTime();
+        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
+        trackingData.LastLogin = new Date();
         if (diffDay > 1.0) {
             trackingData.ContinuousLoginCount = 1;
             ++trackingData.TotalLoginCount;

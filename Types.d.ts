@@ -1,6 +1,7 @@
 interface LoginTracking {
     TotalLoginCount: number,
-    ContinuousLoginCount: number
+    ContinuousLoginCount: number,
+    LastLogin: Date
 }
 
 interface LoginResult {

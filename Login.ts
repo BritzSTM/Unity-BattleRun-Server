@@ -13,8 +13,9 @@ namespace Login {
 
     var CreateLoginTrackingData = function (): LoginTracking {
         var ltData: LoginTracking = {
+            LastLogin: new Date(),
             TotalLoginCount: 1,
-            ContinuousLoginCount: 1
+            ContinuousLoginCount: 1,
         }
 
         return ltData;
@@ -32,7 +33,7 @@ namespace Login {
     }
 
     var GetDiffDaysFromLastLogin = function (): number {
-        var pcs: PlayerProfileViewConstraints;
+        var pcs; //문제
         pcs.ShowLastLogin = true;
 
         var getPlayerPFReq: GetPlayerProfileRequest = {
@@ -62,7 +63,8 @@ namespace Login {
             UpdateLoginTrackingData(ltData);
             loginRes.FirstLogin = true;
 
-            server.WriteTitleEvent({
+            server.WritePlayerEvent({
+                PlayFabId: currentPlayerId,
                 EventName: "login_check_in_first",
                 Body: { TrackingData: trackingData }
             });
@@ -71,7 +73,11 @@ namespace Login {
         }
 
         var trackingData: LoginTracking = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var diffDay = GetDiffDaysFromLastLogin();
+        var lastLoginDate = new Date(trackingData.LastLogin).getTime();
+        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
+        //var diffDay = GetDiffDaysFromLastLogin();
+
+        trackingData.LastLogin = new Date();
         if (diffDay > 1.0) {
             trackingData.ContinuousLoginCount = 1;
             ++trackingData.TotalLoginCount;
