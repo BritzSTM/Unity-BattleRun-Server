@@ -36,20 +36,25 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Datas\" />
-    <Folder Include="Modules\" />
     <Folder Include="Scripts\" />
     <Folder Include="Scripts\PlayFab\" />
     <Folder Include="Scripts\PlayFab\typings\" />
     <Folder Include="Scripts\PlayFab\typings\PlayFab\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Modules\Achivements.ts">
+    <TypeScriptCompile Include="Achivements.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="Modules\PhotonRoomHook.ts">
+    <TypeScriptCompile Include="Login.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="Modules\WeeklyRewardCoins.ts">
+    <TypeScriptCompile Include="PhotonRoomHook.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="Types.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="WeeklyRewardCoins.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="Scripts\PlayFab\Entity.ts" />

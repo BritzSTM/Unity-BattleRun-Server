@@ -1,1 +1,0 @@
-//# sourceMappingURL=WeeklyRewardCoins.js.map
