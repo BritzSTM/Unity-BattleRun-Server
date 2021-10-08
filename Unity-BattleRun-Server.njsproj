@@ -19,6 +19,9 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="Datas\PlayerInternalDatas.md" />
+    <Content Include="Datas\TitleInternalDatas.json" />
+    <Content Include="Datas\TitleInternalDatas.md" />
     <Content Include="Datas\TitleDatas.json">
       <SubType>Code</SubType>
     </Content>

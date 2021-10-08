@@ -49,6 +49,7 @@ namespace Login {
     }
 
     export var CheckIn = function (arg): LoginResult {
+        // 반드시 arg 에 LocalizedCountry 데이터가 들어 있어야함.
         var GetUserRODataReq: GetUserDataRequest = {
             PlayFabId: currentPlayerId,
             Keys: [LOGIN_TRACKING_KEY]
