@@ -1,11 +1,11 @@
-var A;
-(function (A) {
+var __A;
+(function (__A) {
     const LOCALIZED_COUNTRY_KEY = "LocalizedCountry";
-    A.IsLocalizedCountryCode = function (code) {
+    __A.IsLocalizedCountryCode = function (code) {
         const table = ["GLOBAL", "KR"];
         return table.includes(code);
     };
-    A.GetUserLocalizedCountryCode = function () {
+    __A.GetUserLocalizedCountryCode = function () {
         var getUserInternalDataReq = {
             PlayFabId: currentPlayerId,
             Keys: [LOCALIZED_COUNTRY_KEY]
@@ -15,20 +15,33 @@ var A;
             return "GLOBAL";
         }
         var lc = JSON.parse(userInternalDataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
-        return A.IsLocalizedCountryCode(lc) ? lc : "GLOBAL";
+        return __A.IsLocalizedCountryCode(lc) ? lc : "GLOBAL";
     };
-    A.GetUserLocalizedTime = function () {
-        var titleDataReq = { Keys: [LOCALIZED_COUNTRY_KEY] };
-        var titleDataRes = server.GetTitleInternalData(titleDataReq);
-        if (!titleDataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY)) {
-            return new Date();
+    __A.GetLocalizedCountryData = function (code) {
+        var getTitleInternalDataReq = { Keys: [LOCALIZED_COUNTRY_KEY] };
+        var titleInternalDataRes = server.GetTitleInternalData(getTitleInternalDataReq);
+        if (!titleInternalDataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY)) {
+            log.error("Not found LocalizedCountry data in title internal data. use global type.");
+            return { TimeZoneOffset: 0 };
         }
+        var lcs = JSON.parse(titleInternalDataRes.Data[LOCALIZED_COUNTRY_KEY]);
+        return lcs.hasOwnProperty(code) ? lcs[code] : { TimeZoneOffset: 0 };
+    };
+    __A.GetUserLocalizedTime = function () {
+        var userLC = __A.GetUserLocalizedCountryCode();
+        if (userLC == "GLOBAL")
+            return new Date();
         return new Date();
     };
-})(A || (A = {}));
-var IsLocalizedCountryCode = A.IsLocalizedCountryCode;
-var GetUserLocalizedCountryCode = A.GetUserLocalizedCountryCode;
-var GetUserLocalizedTime = A.GetUserLocalizedTime;
-handlers["IsLocalizedCountryCode"] = IsLocalizedCountryCode;
-handlers["GetUserLocalizedTime"] = GetUserLocalizedTime;
+})(__A || (__A = {}));
+var IsLocalizedCountryCode = __A.IsLocalizedCountryCode;
+var GetUserLocalizedCountryCode = __A.GetUserLocalizedCountryCode;
+var GetLocalizedCountryData = __A.GetLocalizedCountryData;
+var GetUserLocalizedTime = __A.GetUserLocalizedTime;
+handlers["TestGetLocalizedCountryData"] = function () {
+    return {
+        Glbobal: GetLocalizedCountryData("GLOBAL"),
+        KR: GetLocalizedCountryData("KR")
+    };
+};
 //# sourceMappingURL=A.js.map

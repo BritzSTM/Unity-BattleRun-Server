@@ -10,6 +10,13 @@ declare var IsLocalizedCountryCode: (code: string) => boolean;
 /** 유저가 사용하고 있는 지역화 클라이언트 코드를 반환.  */
 declare var GetUserLocalizedCountryCode: () => LocalizedCountryCode;
 
+interface LocalizedCountryData {
+    TimeZoneOffset: number
+}
+
+/** 해당 지역화 코드에 맞는 설정 데이터 반환 */
+declare var GetLocalizedCountryData: (code: LocalizedCountryCode) => LocalizedCountryData;
+
 interface LoginTracking {
     TotalLoginCount: number,
     ContinuousLoginCount: number,
