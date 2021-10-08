@@ -64,32 +64,28 @@ namespace __A
         return lcs.hasOwnProperty(code) ? lcs[code] : { TimeZoneOffset: 0 };
     }
 
+    export var GetUserLocalizedCountryData = function (): LocalizedCountryData {
+        var userLCC = GetUserLocalizedCountryCode();
+
+        return GetLocalizedCountryData(userLCC);
+    }
+
     export var GetUserLocalizedTime = function (): Date {
-        /*
-         * 지역화된 시간을 반환하기 위한 함수. 지역 코드는 유저 프로파일에서 획득이 가능함
-         * title internal data[LocalizedCountry]에 Key = Country, Value = JS TimeZoneOffset으로 존재
-         * 만약 LocalizedCountry존재하지 않는다면 글로벌로 가정하고 서버 UTC를 반환
-         */
+        var lcd: LocalizedCountryData = GetUserLocalizedCountryData();
+        var utc = Date.now() + ((lcd.TimeZoneOffset * -1) * 60 * 1000);
 
-        var userLC: LocalizedCountryCode = GetUserLocalizedCountryCode();
-        if (userLC == "GLOBAL")
-            return new Date();
-
-
-
-        // 540 * 60 * 1000 
-        return new Date();
+        return new Date(utc);
     }
 }
 
 var IsLocalizedCountryCode = __A.IsLocalizedCountryCode;
 var GetUserLocalizedCountryCode = __A.GetUserLocalizedCountryCode;
 var GetLocalizedCountryData = __A.GetLocalizedCountryData;
+var GetUserLocalizedCountryData = __A.GetUserLocalizedCountryData;
 var GetUserLocalizedTime = __A.GetUserLocalizedTime;
 
-handlers["TestGetLocalizedCountryData"] = function () {
+handlers["TESTGetUserLocalizedTime"] = function () {
     return {
-        Glbobal: GetLocalizedCountryData("GLOBAL"),
-        KR: GetLocalizedCountryData("KR")
+        Global: GetUserLocalizedTime()
     };
 }

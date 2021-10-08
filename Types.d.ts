@@ -17,6 +17,9 @@ interface LocalizedCountryData {
 /** 해당 지역화 코드에 맞는 설정 데이터 반환 */
 declare var GetLocalizedCountryData: (code: LocalizedCountryCode) => LocalizedCountryData;
 
+/** 유저에 맞는 유저 지역화 데이터 획득 */
+declare var GetUserLocalizedCountryData: () => LocalizedCountryData;
+
 interface LoginTracking {
     TotalLoginCount: number,
     ContinuousLoginCount: number,
