@@ -82,10 +82,4 @@ var IsLocalizedCountryCode = __A.IsLocalizedCountryCode;
 var GetUserLocalizedCountryCode = __A.GetUserLocalizedCountryCode;
 var GetLocalizedCountryData = __A.GetLocalizedCountryData;
 var GetUserLocalizedCountryData = __A.GetUserLocalizedCountryData;
-var GetUserLocalizedTime = __A.GetUserLocalizedTime;
-
-handlers["TESTGetUserLocalizedTime"] = function () {
-    return {
-        Global: GetUserLocalizedTime()
-    };
-}
+var GetUserLocalizedTimeNow = __A.GetUserLocalizedTime;

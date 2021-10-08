@@ -1,5 +1,5 @@
 /** 유저의 지역화 시간을 반환하는 유틸리티 함수 */
-declare var GetUserLocalizedTime: () => Date;
+declare var GetUserLocalizedTimeNow: () => Date;
 
 /** 유저가 사용하고 있는 지역화 클라이언트 타입 */
 type LocalizedCountryCode = "GLOBAL" | "KR";

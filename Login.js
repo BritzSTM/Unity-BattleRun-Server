@@ -1,9 +1,9 @@
 var Login;
 (function (Login) {
-    const LOGIN_TRACKING_KEY = "LOGIN_TRACKING";
+    const LOGIN_TRACKING_KEY = "LoginTracking";
     var CreateLoginTrackingData = function () {
         var ltData = {
-            LastLogin: new Date(),
+            LastLogin: GetUserLocalizedTimeNow(),
             TotalLoginCount: 1,
             ContinuousLoginCount: 1,
         };
@@ -18,16 +18,12 @@ var Login;
         updateUserRODataReq.Data[LOGIN_TRACKING_KEY] = JSON.stringify(data);
         server.UpdateUserReadOnlyData(updateUserRODataReq);
     };
-    var GetDiffDaysFromLastLogin = function () {
-        var pcs;
-        pcs.ShowLastLogin = true;
-        var getPlayerPFReq = {
-            PlayFabId: currentPlayerId,
-            ProfileConstraints: pcs
-        };
-        var profileRes = server.GetPlayerProfile(getPlayerPFReq);
-        var lastLoginDate = new Date(profileRes.PlayerProfile.LastLogin).getTime();
-        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
+    var GetDiffDaysFromLastLogin = function (trackingData) {
+        var userDateNow = GetUserLocalizedTimeNow();
+        userDateNow.setHours(0, 0, 0, 0);
+        var userLastLoginDate = new Date(trackingData.LastLogin);
+        userLastLoginDate.setHours(0, 0, 0, 0);
+        var diffDay = (userDateNow.getTime() - userLastLoginDate.getTime()) / (1000 * 60 * 60 * 24);
         return diffDay;
     };
     Login.CheckIn = function (arg) {
@@ -49,9 +45,7 @@ var Login;
             return loginRes;
         }
         var trackingData = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var lastLoginDate = new Date(trackingData.LastLogin).getTime();
-        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
-        trackingData.LastLogin = new Date();
+        var diffDay = GetDiffDaysFromLastLogin(trackingData);
         if (diffDay > 1.0) {
             ++trackingData.TotalLoginCount;
             if (diffDay <= 2.0)
@@ -59,6 +53,7 @@ var Login;
             else
                 trackingData.ContinuousLoginCount = 1;
         }
+        trackingData.LastLogin = GetUserLocalizedTimeNow();
         UpdateLoginTrackingData(trackingData);
         server.WriteTitleEvent({
             EventName: "login_check_in",
@@ -67,7 +62,7 @@ var Login;
                 DiffDay: diffDay
             }
         });
-        GetUserLocalizedTime();
+        GetUserLocalizedTimeNow();
         return loginRes;
     };
 })(Login || (Login = {}));

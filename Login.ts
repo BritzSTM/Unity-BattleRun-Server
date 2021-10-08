@@ -9,11 +9,11 @@ namespace Login {
     import PlayerProfileViewConstraints = PlayFabServerModels.PlayerProfileViewConstraints;
 
     // constants
-    const LOGIN_TRACKING_KEY: string = "LOGIN_TRACKING";
+    const LOGIN_TRACKING_KEY: string = "LoginTracking";
 
     var CreateLoginTrackingData = function (): LoginTracking {
         var ltData: LoginTracking = {
-            LastLogin: new Date(),
+            LastLogin: GetUserLocalizedTimeNow(),
             TotalLoginCount: 1,
             ContinuousLoginCount: 1,
         }
@@ -32,18 +32,16 @@ namespace Login {
         server.UpdateUserReadOnlyData(updateUserRODataReq);
     }
 
-    var GetDiffDaysFromLastLogin = function (): number {
-        var pcs; //문제
-        pcs.ShowLastLogin = true;
+    
+    var GetDiffDaysFromLastLogin = function (trackingData: LoginTracking): number {
 
-        var getPlayerPFReq: GetPlayerProfileRequest = {
-            PlayFabId: currentPlayerId,
-            ProfileConstraints: pcs
-        }
+        var userDateNow = GetUserLocalizedTimeNow();
+        userDateNow.setHours(0, 0, 0, 0);
 
-        var profileRes = server.GetPlayerProfile(getPlayerPFReq);
-        var lastLoginDate = new Date(profileRes.PlayerProfile.LastLogin).getTime();
-        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
+        var userLastLoginDate = new Date(trackingData.LastLogin);
+        userLastLoginDate.setHours(0, 0, 0, 0);
+
+        var diffDay = (userDateNow.getTime() - userLastLoginDate.getTime()) / (1000 * 60 * 60 * 24);
 
         return diffDay;
     }
@@ -74,11 +72,7 @@ namespace Login {
         }
 
         var trackingData: LoginTracking = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var lastLoginDate = new Date(trackingData.LastLogin).getTime();
-        var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
-        //var diffDay = GetDiffDaysFromLastLogin();
-
-        trackingData.LastLogin = new Date();
+        var diffDay = GetDiffDaysFromLastLogin(trackingData);
         if (diffDay > 1.0) {
             ++trackingData.TotalLoginCount;
 
@@ -88,6 +82,8 @@ namespace Login {
                 trackingData.ContinuousLoginCount = 1;
         }
 
+
+        trackingData.LastLogin = GetUserLocalizedTimeNow();
         UpdateLoginTrackingData(trackingData);
 
         server.WriteTitleEvent({
@@ -98,7 +94,7 @@ namespace Login {
             }
         });
 
-        GetUserLocalizedTime();
+        GetUserLocalizedTimeNow();
         return loginRes;
     }
 }
