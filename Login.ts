@@ -97,6 +97,7 @@ namespace Login {
             }
         });
 
+        GetUserLocalizedTime();
         return loginRes;
     }
 }

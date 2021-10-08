@@ -67,6 +67,7 @@ var Login;
                 DiffDay: diffDay
             }
         });
+        GetUserLocalizedTime();
         return loginRes;
     };
 })(Login || (Login = {}));
