@@ -53,8 +53,11 @@ var Login;
         var diffDay = (Date.now() - lastLoginDate) / (1000 * 60 * 60 * 24);
         trackingData.LastLogin = new Date();
         if (diffDay > 1.0) {
-            trackingData.ContinuousLoginCount = 1;
             ++trackingData.TotalLoginCount;
+            if (diffDay <= 2.0)
+                ++trackingData.ContinuousLoginCount;
+            else
+                trackingData.ContinuousLoginCount = 1;
         }
         UpdateLoginTrackingData(trackingData);
         server.WriteTitleEvent({

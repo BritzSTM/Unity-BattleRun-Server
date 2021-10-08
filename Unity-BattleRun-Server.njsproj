@@ -42,6 +42,9 @@
     <Folder Include="Scripts\PlayFab\typings\PlayFab\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="A.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="Achivements.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

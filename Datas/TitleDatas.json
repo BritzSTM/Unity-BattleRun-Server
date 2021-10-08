@@ -1,3 +1,4 @@
 {
-  "WeeklyRewardCoins": [3, 1, 2, 3, 1, 2, 3]
+  "LocalizedCountry": "{\"KR\": { \"TimeZoneOffset\": -540 } }",
+  "WeeklyRewardCoins": "[ 3, 1, 2, 3, 1, 2, 3 ]"
 }

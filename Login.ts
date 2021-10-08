@@ -79,8 +79,12 @@ namespace Login {
 
         trackingData.LastLogin = new Date();
         if (diffDay > 1.0) {
-            trackingData.ContinuousLoginCount = 1;
             ++trackingData.TotalLoginCount;
+
+            if (diffDay <= 2.0)
+                ++trackingData.ContinuousLoginCount;
+            else
+                trackingData.ContinuousLoginCount = 1;
         }
 
         UpdateLoginTrackingData(trackingData);

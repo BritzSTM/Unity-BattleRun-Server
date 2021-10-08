@@ -1,0 +1,5 @@
+namespace A
+{
+
+}
+var UtilMethod = {}
