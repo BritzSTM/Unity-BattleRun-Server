@@ -20,6 +20,10 @@ declare var GetLocalizedCountryData: (code: LocalizedCountryCode) => LocalizedCo
 /** 유저에 맞는 유저 지역화 데이터 획득 */
 declare var GetUserLocalizedCountryData: () => LocalizedCountryData;
 
+interface ClientCheckInData {
+    LocalizedType: LocalizedCountryCode
+}
+
 interface LoginTracking {
     TotalLoginCount: number,
     ContinuousLoginCount: number,
@@ -27,6 +31,8 @@ interface LoginTracking {
 }
 
 interface LoginResult {
+    Code: number,
+    Message: string,
     FirstLogin: boolean
 }
 

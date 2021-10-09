@@ -10,6 +10,7 @@ namespace Login {
 
     // constants
     const LOGIN_TRACKING_KEY: string = "LoginTracking";
+    const LOCALIZED_COUNTRY_KEY: string = "LocalizedCountry";
 
     var CreateLoginTrackingData = function (): LoginTracking {
         var ltData: LoginTracking = {
@@ -32,9 +33,7 @@ namespace Login {
         server.UpdateUserReadOnlyData(updateUserRODataReq);
     }
 
-    
     var GetDiffDaysFromLastLogin = function (trackingData: LoginTracking): number {
-
         var userDateNow = GetUserLocalizedTimeNow();
         userDateNow.setHours(0, 0, 0, 0);
 
@@ -46,56 +45,106 @@ namespace Login {
         return diffDay;
     }
 
-    export var CheckIn = function (arg): LoginResult {
-        // 반드시 arg 에 LocalizedCountry 데이터가 들어 있어야함.
+    var IsValidClientCheckInData = function (data: ClientCheckInData): boolean {
+        if (!data.hasOwnProperty("LocalizedType"))
+            return false;
+
+        return true;
+    }
+
+    var GetUserLoginTrackingDataOrNull = function (): LoginTracking {
         var GetUserRODataReq: GetUserDataRequest = {
             PlayFabId: currentPlayerId,
             Keys: [LOGIN_TRACKING_KEY]
+        };
+
+        var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(GetUserRODataReq);
+        if (!userRODataRes.Data.hasOwnProperty(LOGIN_TRACKING_KEY)) {
+            return null;
         }
 
-        var loginRes: LoginResult = { FirstLogin: false }
-        var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(GetUserRODataReq);
+        return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
+    }
 
-        // 첫 로그인
-        if (!userRODataRes.Data.hasOwnProperty(LOGIN_TRACKING_KEY)) {
+    var UpdateUserLocalizeCountry = function (checkInData: ClientCheckInData): void {
+        var updateUserRODataReq: UpdateUserDataRequest = {
+            PlayFabId: currentPlayerId,
+            Data: {},
+            Permission: "Private"
+        }
+        updateUserRODataReq.Data[LOCALIZED_COUNTRY_KEY] = checkInData.LocalizedType;
+
+        server.UpdateUserReadOnlyData(updateUserRODataReq);
+    }
+
+    var GetUserLocalizeCountry = function (): LocalizedCountryCode {
+        var getUserRODataReq: GetUserDataRequest = {
+            PlayFabId: currentPlayerId,
+            Keys: [LOCALIZED_COUNTRY_KEY]
+        };
+
+        var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(getUserRODataReq);
+
+        var lc: LocalizedCountryCode;
+        if (!userRODataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
+            lc = "GLOBAL";
+        else
+            lc = JSON.parse(userRODataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
+
+        return lc;
+    }
+
+    export var CheckIn = function (checkInData: ClientCheckInData): LoginResult {
+        if (!IsValidClientCheckInData(checkInData)) {
+            return { Code: -1, Message: "Submitted invalid CheckIn data.", FirstLogin: false };
+        }
+
+        // 첫 체크인 때 클라이언트 버전을 결정함
+        // 또한 이미 있는 계정에 다른 지역화 버전을 가지고 체크인을 시도할 경우 실패로 간주
+        var loginTrackingData: LoginTracking = GetUserLoginTrackingDataOrNull();
+        if (loginTrackingData == null) {
             var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
-            loginRes.FirstLogin = true;
+            UpdateUserLocalizeCountry(checkInData);
 
+            var checkInRes: LoginResult = { Code: 0, Message: "Succeed login.", FirstLogin: true };
             server.WritePlayerEvent({
                 PlayFabId: currentPlayerId,
-                EventName: "login_check_in_first",
-                Body: { TrackingData: trackingData }
+                EventName: "login_first_time",
+                Body: { ClientCheckInData: checkInData }
             });
 
-            return loginRes;
+            return checkInRes;
         }
 
-        var trackingData: LoginTracking = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var diffDay = GetDiffDaysFromLastLogin(trackingData);
-        if (diffDay > 1.0) {
-            ++trackingData.TotalLoginCount;
+        // 이전에 로그인한 지역화 버전과 현재 제출한 지역화 버전 일치성 확인
+        var userLC: LocalizedCountryCode = GetUserLocalizeCountry();
+        if (userLC != checkInData.LocalizedType)
+            return { Code: -2, Message: "Different from previous UserLocalizeCountry.", FirstLogin: false };
 
-            if (diffDay <= 2.0)
-                ++trackingData.ContinuousLoginCount;
+        // 로그인 추적 데이터 업데이트
+        var diffDay = GetDiffDaysFromLastLogin(loginTrackingData);
+        if (diffDay >= 1.0) {
+            ++loginTrackingData.TotalLoginCount;
+
+            if (diffDay < 2.0)
+                ++loginTrackingData.ContinuousLoginCount;
             else
-                trackingData.ContinuousLoginCount = 1;
+                loginTrackingData.ContinuousLoginCount = 1;
         }
+        loginTrackingData.LastLogin = GetUserLocalizedTimeNow();
+        UpdateLoginTrackingData(loginTrackingData);
 
-
-        trackingData.LastLogin = GetUserLocalizedTimeNow();
-        UpdateLoginTrackingData(trackingData);
-
-        server.WriteTitleEvent({
-            EventName: "login_check_in",
-            Body: {
-                TrackingData: trackingData,
-                DiffDay: diffDay
-            }
+        
+        var checkInRes: LoginResult = { Code: 0, Message: "Succeed login.", FirstLogin: false };
+        server.WritePlayerEvent({
+            PlayFabId: currentPlayerId,
+            EventName: "login",
+            Body: { ClientCheckInData: checkInData }
         });
 
-        GetUserLocalizedTimeNow();
-        return loginRes;
+        return checkInRes;
     }
 }
-handlers["Login"] = Login.CheckIn;
+
+handlers["CheckInUser"] = Login.CheckIn;

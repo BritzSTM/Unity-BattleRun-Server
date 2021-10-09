@@ -1,6 +1,7 @@
 var Login;
 (function (Login) {
     const LOGIN_TRACKING_KEY = "LoginTracking";
+    const LOCALIZED_COUNTRY_KEY = "LocalizedCountry";
     var CreateLoginTrackingData = function () {
         var ltData = {
             LastLogin: GetUserLocalizedTimeNow(),
@@ -26,45 +27,82 @@ var Login;
         var diffDay = (userDateNow.getTime() - userLastLoginDate.getTime()) / (1000 * 60 * 60 * 24);
         return diffDay;
     };
-    Login.CheckIn = function (arg) {
+    var IsValidClientCheckInData = function (data) {
+        if (!data.hasOwnProperty("LocalizedType"))
+            return false;
+        return true;
+    };
+    var GetUserLoginTrackingDataOrNull = function () {
         var GetUserRODataReq = {
             PlayFabId: currentPlayerId,
             Keys: [LOGIN_TRACKING_KEY]
         };
-        var loginRes = { FirstLogin: false };
         var userRODataRes = server.GetUserReadOnlyData(GetUserRODataReq);
         if (!userRODataRes.Data.hasOwnProperty(LOGIN_TRACKING_KEY)) {
+            return null;
+        }
+        return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
+    };
+    var UpdateUserLocalizeCountry = function (checkInData) {
+        var updateUserRODataReq = {
+            PlayFabId: currentPlayerId,
+            Data: {},
+            Permission: "Private"
+        };
+        updateUserRODataReq.Data[LOCALIZED_COUNTRY_KEY] = checkInData.LocalizedType;
+        server.UpdateUserReadOnlyData(updateUserRODataReq);
+    };
+    var GetUserLocalizeCountry = function () {
+        var getUserRODataReq = {
+            PlayFabId: currentPlayerId,
+            Keys: [LOCALIZED_COUNTRY_KEY]
+        };
+        var userRODataRes = server.GetUserReadOnlyData(getUserRODataReq);
+        var lc;
+        if (!userRODataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
+            lc = "GLOBAL";
+        else
+            lc = JSON.parse(userRODataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
+        return lc;
+    };
+    Login.CheckIn = function (checkInData) {
+        if (!IsValidClientCheckInData(checkInData)) {
+            return { Code: -1, Message: "Submitted invalid CheckIn data.", FirstLogin: false };
+        }
+        var loginTrackingData = GetUserLoginTrackingDataOrNull();
+        if (loginTrackingData == null) {
             var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
-            loginRes.FirstLogin = true;
+            UpdateUserLocalizeCountry(checkInData);
+            var checkInRes = { Code: 0, Message: "Succeed login.", FirstLogin: true };
             server.WritePlayerEvent({
                 PlayFabId: currentPlayerId,
-                EventName: "login_check_in_first",
-                Body: { TrackingData: trackingData }
+                EventName: "login_first_time",
+                Body: { ClientCheckInData: checkInData }
             });
-            return loginRes;
+            return checkInRes;
         }
-        var trackingData = JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
-        var diffDay = GetDiffDaysFromLastLogin(trackingData);
-        if (diffDay > 1.0) {
-            ++trackingData.TotalLoginCount;
-            if (diffDay <= 2.0)
-                ++trackingData.ContinuousLoginCount;
+        var userLC = GetUserLocalizeCountry();
+        if (userLC != checkInData.LocalizedType)
+            return { Code: -2, Message: "Different from previous UserLocalizeCountry.", FirstLogin: false };
+        var diffDay = GetDiffDaysFromLastLogin(loginTrackingData);
+        if (diffDay >= 1.0) {
+            ++loginTrackingData.TotalLoginCount;
+            if (diffDay < 2.0)
+                ++loginTrackingData.ContinuousLoginCount;
             else
-                trackingData.ContinuousLoginCount = 1;
+                loginTrackingData.ContinuousLoginCount = 1;
         }
-        trackingData.LastLogin = GetUserLocalizedTimeNow();
-        UpdateLoginTrackingData(trackingData);
-        server.WriteTitleEvent({
-            EventName: "login_check_in",
-            Body: {
-                TrackingData: trackingData,
-                DiffDay: diffDay
-            }
+        loginTrackingData.LastLogin = GetUserLocalizedTimeNow();
+        UpdateLoginTrackingData(loginTrackingData);
+        var checkInRes = { Code: 0, Message: "Succeed login.", FirstLogin: false };
+        server.WritePlayerEvent({
+            PlayFabId: currentPlayerId,
+            EventName: "login",
+            Body: { ClientCheckInData: checkInData }
         });
-        GetUserLocalizedTimeNow();
-        return loginRes;
+        return checkInRes;
     };
 })(Login || (Login = {}));
-handlers["Login"] = Login.CheckIn;
+handlers["CheckInUser"] = Login.CheckIn;
 //# sourceMappingURL=Login.js.map
