@@ -44,13 +44,13 @@ var Login;
         return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
     };
     var UpdateUserLocalizeCountry = function (checkInData) {
-        var updateUserRODataReq = {
+        var updateUserInternalDataReq = {
             PlayFabId: currentPlayerId,
             Data: {},
             Permission: "Private"
         };
-        updateUserRODataReq.Data[LOCALIZED_COUNTRY_KEY] = checkInData.LocalizedType;
-        server.UpdateUserReadOnlyData(updateUserRODataReq);
+        updateUserInternalDataReq.Data[LOCALIZED_COUNTRY_KEY] = JSON.stringify(checkInData.LocalizedType);
+        server.UpdateUserInternalData(updateUserInternalDataReq);
     };
     var GetUserLocalizeCountry = function () {
         var getUserRODataReq = {

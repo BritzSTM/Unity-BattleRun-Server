@@ -67,14 +67,14 @@ namespace Login {
     }
 
     var UpdateUserLocalizeCountry = function (checkInData: ClientCheckInData): void {
-        var updateUserRODataReq: UpdateUserDataRequest = {
+        var updateUserInternalDataReq: UpdateUserDataRequest = {
             PlayFabId: currentPlayerId,
             Data: {},
             Permission: "Private"
         }
-        updateUserRODataReq.Data[LOCALIZED_COUNTRY_KEY] = checkInData.LocalizedType;
+        updateUserInternalDataReq.Data[LOCALIZED_COUNTRY_KEY] = JSON.stringify(checkInData.LocalizedType);
 
-        server.UpdateUserReadOnlyData(updateUserRODataReq);
+        server.UpdateUserInternalData(updateUserInternalDataReq);
     }
 
     var GetUserLocalizeCountry = function (): LocalizedCountryCode {
