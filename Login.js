@@ -43,7 +43,7 @@ var Login;
         }
         return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
     };
-    var UpdateUserLocalizeCountry = function (checkInData) {
+    var UpdateUserLocalizedCountry = function (checkInData) {
         var updateUserInternalDataReq = {
             PlayFabId: currentPlayerId,
             Data: {},
@@ -52,12 +52,12 @@ var Login;
         updateUserInternalDataReq.Data[LOCALIZED_COUNTRY_KEY] = JSON.stringify(checkInData.LocalizedType);
         server.UpdateUserInternalData(updateUserInternalDataReq);
     };
-    var GetUserLocalizeCountry = function () {
+    var GetUserLocalizedCountry = function () {
         var updateUserInternalDataReq = {
             PlayFabId: currentPlayerId,
             Keys: [LOCALIZED_COUNTRY_KEY]
         };
-        var userInternalDataRes = server.GetUserReadOnlyData(updateUserInternalDataReq);
+        var userInternalDataRes = server.GetUserInternalData(updateUserInternalDataReq);
         var lc;
         if (!userInternalDataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
             lc = "GLOBAL";
@@ -71,20 +71,20 @@ var Login;
         }
         var loginTrackingData = GetUserLoginTrackingDataOrNull();
         if (loginTrackingData == null) {
+            UpdateUserLocalizedCountry(checkInData);
             var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
-            UpdateUserLocalizeCountry(checkInData);
             var checkInRes = { Code: 0, Message: "Succeed login.", FirstLogin: true };
             server.WritePlayerEvent({
                 PlayFabId: currentPlayerId,
-                EventName: "login_first_time",
+                EventName: "checkin_first_time",
                 Body: { ClientCheckInData: checkInData }
             });
             return checkInRes;
         }
-        var userLC = GetUserLocalizeCountry();
+        var userLC = GetUserLocalizedCountry();
         if (userLC != checkInData.LocalizedType)
-            return { Code: -2, Message: "Different from previous UserLocalizeCountry.", FirstLogin: false };
+            return { Code: -2, Message: "Different from previous UserLocalizedCountry.", FirstLogin: false };
         var diffDay = GetDiffDaysFromLastLogin(loginTrackingData);
         if (diffDay >= 1.0) {
             ++loginTrackingData.TotalLoginCount;
@@ -98,7 +98,7 @@ var Login;
         var checkInRes = { Code: 0, Message: "Succeed login.", FirstLogin: false };
         server.WritePlayerEvent({
             PlayFabId: currentPlayerId,
-            EventName: "login",
+            EventName: "checkin",
             Body: { ClientCheckInData: checkInData }
         });
         return checkInRes;

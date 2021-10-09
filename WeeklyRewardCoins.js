@@ -1,38 +1,47 @@
 var WeeklyRewardCoins;
 (function (WeeklyRewardCoins) {
-    const TRACKING_SET_KEY = "TrackingSet";
-    var CheckIn = function (args) {
-        var GetUserRODataReq = {
-            PlayFabId: currentPlayerId,
-            Keys: [TRACKING_SET_KEY]
+    const WEEKLY_REWARD_COINS_KEY = "WeeklyRewardCoins";
+    const WEEKLY_REWARD_COIN_TRACKING_KEY = "WeeklyRewardCoinsTracking";
+    WeeklyRewardCoins.GetWeeklyRewardCoins = function () {
+        var getTitleInternalDataReq = {
+            Keys: [WEEKLY_REWARD_COINS_KEY]
         };
-        var roDataRes = server.GetUserReadOnlyData(GetUserRODataReq);
-        var trackingSet = {};
-        if (roDataRes.Data.hasOwnProperty(TRACKING_SET_KEY)) {
-            trackingSet = JSON.parse(roDataRes.Data[TRACKING_SET_KEY].Value);
+        var titleInternalDataRes = server.GetTitleInternalData(getTitleInternalDataReq);
+        if (!titleInternalDataRes.Data.hasOwnProperty(WEEKLY_REWARD_COINS_KEY)) {
+            return new Array(7).fill(0);
+        }
+        var table = JSON.parse(titleInternalDataRes.Data[WEEKLY_REWARD_COINS_KEY]);
+        return (table.length == 7) ? table : new Array(7).fill(0);
+    };
+    var UpdateUserWeeklyRewardCoinsTracking = function (trackingData) {
+        var updateUserRODataReq = {
+            PlayFabId: currentPlayerId,
+            Data: {},
+            Permission: "Public"
+        };
+        updateUserRODataReq.Data[WEEKLY_REWARD_COIN_TRACKING_KEY] = JSON.stringify(trackingData);
+        server.UpdateUserReadOnlyData(updateUserRODataReq);
+    };
+    WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking = function () {
+        var getUserRODataReq = {
+            PlayFabId: currentPlayerId,
+            Keys: [WEEKLY_REWARD_COIN_TRACKING_KEY]
+        };
+        var userRODataRes = server.GetUserReadOnlyData(getUserRODataReq);
+        var trackingData;
+        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY)) {
+            trackingData = new Array(7).fill(false);
         }
         else {
+            trackingData = JSON.parse(userRODataRes.Data[WEEKLY_REWARD_COIN_TRACKING_KEY].Value);
         }
-        return JSON.stringify([]);
+        return trackingData;
     };
-    var GetFlag = function () {
-        return [];
-    };
-    var ResetTracker = function () {
-        var reset = {};
-        reset["LOGIN_STACK"] = 1;
-        var dateObj = new Date(Date.now());
-        dateObj.setDate(dateObj.getDate() + 1);
-        reset["NEXT"] = dateObj.getTime();
-        return JSON.stringify(reset);
-    };
-    function UpdateTrackerData(data) {
-        var UpdateUserReadOnlyDataRequest = {
-            PlayFabId: currentPlayerId,
-            Data: {}
-        };
-        UpdateUserReadOnlyDataRequest.Data[TRACKING_SET_KEY] = JSON.stringify(data);
-        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
-    }
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
+handlers["TestCoins"] = function () {
+    return {
+        WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+        UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+    };
+};
 //# sourceMappingURL=WeeklyRewardCoins.js.map

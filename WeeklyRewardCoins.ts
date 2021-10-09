@@ -9,70 +9,61 @@ namespace WeeklyRewardCoins
     import GetTitleDataResult = PlayFabServerModels.GetTitleDataResult;
 
     // constants
-    const TRACKING_SET_KEY: string = "TrackingSet";
+    const WEEKLY_REWARD_COINS_KEY: string = "WeeklyRewardCoins";
+    const WEEKLY_REWARD_COIN_TRACKING_KEY: string = "WeeklyRewardCoinsTracking";
 
-
-    var CheckIn = function (args) : string {
-        
-        var GetUserRODataReq: GetUserDataRequest = {
-            PlayFabId: currentPlayerId,
-            Keys: [TRACKING_SET_KEY]
+    // 주간 코인보상 획득 
+    export var GetWeeklyRewardCoins = function (): WeeklyRewardCoins {
+        var getTitleInternalDataReq: GetTitleDataRequest = {
+            Keys: [WEEKLY_REWARD_COINS_KEY]
         };
 
-        var roDataRes: GetUserDataResult = server.GetUserReadOnlyData(GetUserRODataReq);
-        var trackingSet = { };
+        var titleInternalDataRes: GetTitleDataResult = server.GetTitleInternalData(getTitleInternalDataReq);
+        if (!titleInternalDataRes.Data.hasOwnProperty(WEEKLY_REWARD_COINS_KEY)) {
+            return new Array<number>(7).fill(0);
+        }
 
-        if (roDataRes.Data.hasOwnProperty(TRACKING_SET_KEY)) {
-            trackingSet = JSON.parse(roDataRes.Data[TRACKING_SET_KEY].Value);
+        var table: WeeklyRewardCoins = JSON.parse(titleInternalDataRes.Data[WEEKLY_REWARD_COINS_KEY]);
+
+        return (table.length == 7) ? table : new Array<number>(7).fill(0);
+    }
+
+    var UpdateUserWeeklyRewardCoinsTracking = function (trackingData: WeeklyRewardCoinsTracking): void {
+        var updateUserRODataReq: UpdateUserDataRequest = {
+            PlayFabId: currentPlayerId,
+            Data: {},
+            Permission: "Public"
+        };
+
+        updateUserRODataReq.Data[WEEKLY_REWARD_COIN_TRACKING_KEY] = JSON.stringify(trackingData);
+        server.UpdateUserReadOnlyData(updateUserRODataReq);
+    }
+
+    // 주간 코인보상 획득 추적 획득
+    export var GetUserWeeklyRewardCoinsTracking = function (): WeeklyRewardCoinsTracking {
+        var getUserRODataReq: GetUserDataRequest = {
+            PlayFabId: currentPlayerId,
+            Keys: [WEEKLY_REWARD_COIN_TRACKING_KEY]
+        };
+
+        var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(getUserRODataReq);
+
+        // 주간 코인보상 추적목록이 없다면 생성
+        var trackingData: WeeklyRewardCoinsTracking;
+        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY)) {
+            trackingData = new Array<boolean>(7).fill(false);
         }
         else {
-            // 추적하는 데이터가 없는 경우
+            trackingData = JSON.parse(userRODataRes.Data[WEEKLY_REWARD_COIN_TRACKING_KEY].Value);
         }
 
-        //if (Date.now() > parseInt(trackingSet["NEXT_GRANT"])) {
-        //    var GetTitleDataRequest: GetTitleDataRequest = {
-        //        Keys: ["TAB"]
-        //    };
-
-        //    var GetTitleDataResult: GetTitleDataResult = server.GetTitleData(GetTitleDataRequest);
-        //    log.info("Your consecutive login streak increased to: " + tracker[TRACKER_LOGIN_STREAK]);
-        //    UpdateTrackerData(tracker);
-
-        //    // ---
-        //    if (!GetTitleDataResult.Data.hasOwnProperty("TAB")) {
-        //        log.error("Rewards table could not be found. No rewards will be given. Exiting...");
-        //        return JSON.stringify([]);
-        //    }
-        //}
-
-        return JSON.stringify([]);
+        return trackingData;
     }
+}
 
-    var GetFlag = function (): Array<boolean>{
-
-        return [];
-    }
-
-    var ResetTracker = function (): string {
-        var reset = {};
-        reset["LOGIN_STACK"] = 1;
-
-        var dateObj = new Date(Date.now());
-        dateObj.setDate(dateObj.getDate() + 1);
-
-        reset["NEXT"] = dateObj.getTime();
-
-        return JSON.stringify(reset);
-    }
-
-    function UpdateTrackerData(data): void {
-        var UpdateUserReadOnlyDataRequest: UpdateUserDataRequest = {
-            PlayFabId: currentPlayerId,
-            Data: {}
-        };
-
-        UpdateUserReadOnlyDataRequest.Data[TRACKING_SET_KEY] = JSON.stringify(data);
-
-        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
-    }
+handlers["TestCoins"] = function () {
+    return {
+        WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+        UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+    };
 }

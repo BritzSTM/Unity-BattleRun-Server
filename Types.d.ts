@@ -36,6 +36,5 @@ interface LoginResult {
     FirstLogin: boolean
 }
 
-interface LoginRewardTracking {
-    WeeklyRewardCoins?: Array<boolean>
-}
+type WeeklyRewardCoins = Array<number>;
+type WeeklyRewardCoinsTracking = Array<boolean>;
