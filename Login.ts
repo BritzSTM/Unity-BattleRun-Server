@@ -78,18 +78,18 @@ namespace Login {
     }
 
     var GetUserLocalizeCountry = function (): LocalizedCountryCode {
-        var getUserRODataReq: GetUserDataRequest = {
+        var updateUserInternalDataReq: GetUserDataRequest = {
             PlayFabId: currentPlayerId,
             Keys: [LOCALIZED_COUNTRY_KEY]
         };
 
-        var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(getUserRODataReq);
+        var userInternalDataRes: GetUserDataResult = server.GetUserReadOnlyData(updateUserInternalDataReq);
 
         var lc: LocalizedCountryCode;
-        if (!userRODataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
+        if (!userInternalDataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
             lc = "GLOBAL";
         else
-            lc = JSON.parse(userRODataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
+            lc = JSON.parse(userInternalDataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
 
         return lc;
     }

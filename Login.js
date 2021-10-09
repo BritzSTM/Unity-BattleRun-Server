@@ -53,16 +53,16 @@ var Login;
         server.UpdateUserInternalData(updateUserInternalDataReq);
     };
     var GetUserLocalizeCountry = function () {
-        var getUserRODataReq = {
+        var updateUserInternalDataReq = {
             PlayFabId: currentPlayerId,
             Keys: [LOCALIZED_COUNTRY_KEY]
         };
-        var userRODataRes = server.GetUserReadOnlyData(getUserRODataReq);
+        var userInternalDataRes = server.GetUserReadOnlyData(updateUserInternalDataReq);
         var lc;
-        if (!userRODataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
+        if (!userInternalDataRes.Data.hasOwnProperty(LOCALIZED_COUNTRY_KEY))
             lc = "GLOBAL";
         else
-            lc = JSON.parse(userRODataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
+            lc = JSON.parse(userInternalDataRes.Data[LOCALIZED_COUNTRY_KEY].Value);
         return lc;
     };
     Login.CheckIn = function (checkInData) {
