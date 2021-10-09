@@ -41,7 +41,7 @@ var WeeklyRewardCoins;
     };
     WeeklyRewardCoins.TakeTodayRewardCoin = function () {
         var userTrackingData = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking();
-        var todayPos = GetUserLocalizedTimeNow().getDate();
+        var todayPos = GetUserLocalizedTimeNow().getDay();
         if (userTrackingData[todayPos]) {
             return { Code: 1, Message: "Already taken coin." };
         }
@@ -59,15 +59,15 @@ var WeeklyRewardCoins;
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
 handlers["TestCoins"] = function () {
     return {
-        Today: GetUserLocalizedTimeNow().getDate(),
+        Today: GetUserLocalizedTimeNow().getDay(),
         Init: {
             WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
             UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
         },
         Taken: {
+            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin(),
             WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking(),
-            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin()
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
         }
     };
 };

@@ -67,7 +67,7 @@ namespace WeeklyRewardCoins
     // 오늘의 보상 코인을 획득처리
     export var TakeTodayRewardCoin = function (): TakeTodayRewardCoinResult {
         var userTrackingData: WeeklyRewardCoinsTracking = GetUserWeeklyRewardCoinsTracking();
-        var todayPos: number = GetUserLocalizedTimeNow().getDate();
+        var todayPos: number = GetUserLocalizedTimeNow().getDay();
 
         if (userTrackingData[todayPos]) {
             return { Code: 1, Message: "Already taken coin." };
@@ -90,16 +90,16 @@ namespace WeeklyRewardCoins
 
 handlers["TestCoins"] = function () {
     return {
-        Today: GetUserLocalizedTimeNow().getDate(),
+        Today: GetUserLocalizedTimeNow().getDay(),
 
         Init: {
             WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
             UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
         },
         Taken: {
+            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin(),
             WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking(),
-            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin()
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
         }
     };
 }
