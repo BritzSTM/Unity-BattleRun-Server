@@ -14,16 +14,16 @@ namespace WeeklyRewardCoins
 
     // 주간 코인보상 획득 
     export var GetWeeklyRewardCoins = function (): WeeklyRewardCoins {
-        var getTitleInternalDataReq: GetTitleDataRequest = {
+        var getTitleDataReq: GetTitleDataRequest = {
             Keys: [WEEKLY_REWARD_COINS_KEY]
         };
 
-        var titleInternalDataRes: GetTitleDataResult = server.GetTitleInternalData(getTitleInternalDataReq);
-        if (!titleInternalDataRes.Data.hasOwnProperty(WEEKLY_REWARD_COINS_KEY)) {
+        var titleDataRes: GetTitleDataResult = server.GetTitleData(getTitleDataReq);
+        if (!titleDataRes.Data.hasOwnProperty(WEEKLY_REWARD_COINS_KEY)) {
             return new Array<number>(7).fill(0);
         }
 
-        var table: WeeklyRewardCoins = JSON.parse(titleInternalDataRes.Data[WEEKLY_REWARD_COINS_KEY]);
+        var table: WeeklyRewardCoins = JSON.parse(titleDataRes.Data[WEEKLY_REWARD_COINS_KEY]);
 
         return (table.length == 7) ? table : new Array<number>(7).fill(0);
     }
@@ -52,6 +52,7 @@ namespace WeeklyRewardCoins
         var trackingData: WeeklyRewardCoinsTracking;
         if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY)) {
             trackingData = new Array<boolean>(7).fill(false);
+            UpdateUserWeeklyRewardCoinsTracking(trackingData);
         }
         else {
             trackingData = JSON.parse(userRODataRes.Data[WEEKLY_REWARD_COIN_TRACKING_KEY].Value);
