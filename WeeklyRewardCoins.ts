@@ -88,25 +88,13 @@ namespace WeeklyRewardCoins
         server.WritePlayerEvent({
             PlayFabId: currentPlayerId,
             EventName: "taken_weekly_reward_coin",
-            Body: takeRes
+            Body: { takeRes }
         });
 
         return takeRes;
     }
 }
 
-handlers["TestCoins"] = function () {
-    return {
-        Today: GetUserLocalizedTimeNow().getDay(),
-
-        Init: {
-            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
-        },
-        Taken: {
-            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin(),
-            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
-        }
-    };
-}
+handlers["GetWeeklyRewardCoins"] = WeeklyRewardCoins.GetWeeklyRewardCoins;
+handlers["GetUserWeeklyRewardCoinsTracking"] = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking;
+handlers["TakeTodayRewardCoin"] = WeeklyRewardCoins.TakeTodayRewardCoin;
