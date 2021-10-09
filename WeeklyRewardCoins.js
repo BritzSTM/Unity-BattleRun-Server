@@ -59,6 +59,7 @@ var WeeklyRewardCoins;
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
 handlers["TestCoins"] = function () {
     return {
+        Today: GetUserLocalizedTimeNow().getDate(),
         Init: {
             WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
             UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
