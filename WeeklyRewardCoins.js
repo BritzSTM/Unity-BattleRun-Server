@@ -54,7 +54,13 @@ var WeeklyRewardCoins;
         var addUserCoinRes = server.AddUserVirtualCurrency(addUserCoinReq);
         userTrackingData[todayPos] = true;
         UpdateUserWeeklyRewardCoinsTracking(userTrackingData);
-        return { Code: 0, Message: "Succeed taken reward coin.", TotalCoin: addUserCoinRes.Balance };
+        var takeRes = { Code: 0, Message: "Succeed taken reward coin.", TotalCoin: addUserCoinRes.Balance };
+        server.WritePlayerEvent({
+            PlayFabId: currentPlayerId,
+            EventName: "taken_weekly_reward_coin",
+            Body: takeRes
+        });
+        return takeRes;
     };
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
 handlers["TestCoins"] = function () {
