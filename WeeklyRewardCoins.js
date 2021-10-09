@@ -2,6 +2,7 @@ var WeeklyRewardCoins;
 (function (WeeklyRewardCoins) {
     const WEEKLY_REWARD_COINS_KEY = "WeeklyRewardCoins";
     const WEEKLY_REWARD_COIN_TRACKING_KEY = "WeeklyRewardCoinsTracking";
+    const WEEKLY_REWARD_COIN_TYPE = "CI";
     WeeklyRewardCoins.GetWeeklyRewardCoins = function () {
         var getTitleDataReq = {
             Keys: [WEEKLY_REWARD_COINS_KEY]
@@ -38,11 +39,35 @@ var WeeklyRewardCoins;
         }
         return trackingData;
     };
+    WeeklyRewardCoins.TakeTodayRewardCoin = function () {
+        var userTrackingData = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking();
+        var todayPos = GetUserLocalizedTimeNow().getDate();
+        if (userTrackingData[todayPos]) {
+            return { Code: 1, Message: "Already taken coin." };
+        }
+        var weeklyRewardCoins = WeeklyRewardCoins.GetWeeklyRewardCoins();
+        var addUserCoinReq = {
+            PlayFabId: currentPlayerId,
+            VirtualCurrency: WEEKLY_REWARD_COIN_TYPE,
+            Amount: weeklyRewardCoins[todayPos]
+        };
+        var addUserCoinRes = server.AddUserVirtualCurrency(addUserCoinReq);
+        userTrackingData[todayPos] = true;
+        UpdateUserWeeklyRewardCoinsTracking(userTrackingData);
+        return { Code: 0, Message: "Succeed taken reward coin.", TotalCoin: addUserCoinRes.Balance };
+    };
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
 handlers["TestCoins"] = function () {
     return {
-        WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-        UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+        Init: {
+            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+        },
+        Taken: {
+            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking(),
+            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin()
+        }
     };
 };
 //# sourceMappingURL=WeeklyRewardCoins.js.map

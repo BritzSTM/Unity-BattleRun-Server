@@ -7,10 +7,13 @@ namespace WeeklyRewardCoins
     import UpdateUserDataResult = PlayFabServerModels.UpdateUserDataResult;
     import GetTitleDataRequest = PlayFabServerModels.GetTitleDataRequest;
     import GetTitleDataResult = PlayFabServerModels.GetTitleDataResult;
+    import AddUserVirtualCurrencyRequest = PlayFabServerModels.AddUserVirtualCurrencyRequest;
+    import ModifyUserVirtualCurrencyResult = PlayFabServerModels.ModifyUserVirtualCurrencyResult;
 
     // constants
     const WEEKLY_REWARD_COINS_KEY: string = "WeeklyRewardCoins";
     const WEEKLY_REWARD_COIN_TRACKING_KEY: string = "WeeklyRewardCoinsTracking";
+    const WEEKLY_REWARD_COIN_TYPE: string = "CI";
 
     // 주간 코인보상 획득 
     export var GetWeeklyRewardCoins = function (): WeeklyRewardCoins {
@@ -60,11 +63,41 @@ namespace WeeklyRewardCoins
 
         return trackingData;
     }
+
+    // 오늘의 보상 코인을 획득처리
+    export var TakeTodayRewardCoin = function (): TakeTodayRewardCoinResult {
+        var userTrackingData: WeeklyRewardCoinsTracking = GetUserWeeklyRewardCoinsTracking();
+        var todayPos: number = GetUserLocalizedTimeNow().getDate();
+
+        if (userTrackingData[todayPos]) {
+            return { Code: 1, Message: "Already taken coin." };
+        }
+
+        var weeklyRewardCoins: WeeklyRewardCoins = GetWeeklyRewardCoins();
+        var addUserCoinReq: AddUserVirtualCurrencyRequest = {
+            PlayFabId: currentPlayerId,
+            VirtualCurrency: WEEKLY_REWARD_COIN_TYPE,
+            Amount: weeklyRewardCoins[todayPos]
+        };
+
+        var addUserCoinRes: ModifyUserVirtualCurrencyResult = server.AddUserVirtualCurrency(addUserCoinReq);
+        userTrackingData[todayPos] = true;
+        UpdateUserWeeklyRewardCoinsTracking(userTrackingData);
+
+        return { Code: 0, Message: "Succeed taken reward coin.", TotalCoin: addUserCoinRes.Balance };
+    }
 }
 
 handlers["TestCoins"] = function () {
     return {
-        WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
-        UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+        Init: {
+            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking()
+        },
+        Taken: {
+            WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(),
+            UserTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking(),
+            TakeTodayRewardCoinRes: WeeklyRewardCoins.TakeTodayRewardCoin()
+        }
     };
 }

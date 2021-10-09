@@ -38,3 +38,9 @@ interface LoginResult {
 
 type WeeklyRewardCoins = Array<number>;
 type WeeklyRewardCoinsTracking = Array<boolean>;
+
+interface TakeTodayRewardCoinResult {
+    Code: number,
+    Message: string,
+    TotalCoin?: number
+}
