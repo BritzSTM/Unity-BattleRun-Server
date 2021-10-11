@@ -94,7 +94,7 @@ namespace Login {
         return lc;
     }
 
-    export var CheckIn = function (checkInData: ClientCheckInData): LoginResult {
+    export var CheckIn = function (checkInData: ClientCheckInData): CheckInResult {
         if (!IsValidClientCheckInData(checkInData)) {
             return { Code: -1, Message: "Submitted invalid CheckIn data.", FirstLogin: false };
         }
@@ -108,7 +108,7 @@ namespace Login {
             var ltData = CreateLoginTrackingData();
             UpdateLoginTrackingData(ltData);
 
-            var checkInRes: LoginResult = { Code: 0, Message: "Succeed login.", FirstLogin: true };
+            var checkInRes: CheckInResult = { Code: 0, Message: "Succeed login.", FirstLogin: true };
             server.WritePlayerEvent({
                 PlayFabId: currentPlayerId,
                 EventName: "checkin_first_time",
@@ -137,7 +137,7 @@ namespace Login {
         UpdateLoginTrackingData(loginTrackingData);
 
                 
-        var checkInRes: LoginResult = { Code: 0, Message: "Succeed login.", FirstLogin: false };
+        var checkInRes: CheckInResult = { Code: 0, Message: "Succeed login.", FirstLogin: false };
         server.WritePlayerEvent({
             PlayFabId: currentPlayerId,
             EventName: "checkin",

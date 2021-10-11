@@ -30,7 +30,7 @@ interface LoginTracking {
     LastLogin: Date
 }
 
-interface LoginResult {
+interface CheckInResult {
     Code: number,
     Message: string,
     FirstLogin: boolean

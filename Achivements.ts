@@ -1496,21 +1496,6 @@ namespace Achivements
     const MAX_BITS = 1024;
     const MAX_BITS_STRING = "0".repeat(MAX_BITS);
 
-    export var _testAddAchivements = function () {
-        var set = new BitSet;
-        set.set(64, 1);
-
-        let formated = ("0".repeat(MAX_BITS) + set.toString()).slice(-1024);
-
-        var updateUserDataResult = server.UpdateUserReadOnlyData({
-            PlayFabId: currentPlayerId,
-            Permission: "Public",
-            Data: {
-                "_A1": formated
-            }
-        });
-    }
-
     export var InitAchivements = function (args: Array<string>) {
         var cats: Array<string> = args;
 
@@ -1527,5 +1512,4 @@ namespace Achivements
     }
 }
 
-handlers["_testAddAchivements"] = Achivements._testAddAchivements;
 handlers["InitAchivements"] = Achivements.InitAchivements;
