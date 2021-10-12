@@ -42,6 +42,11 @@ interface CheckInResult {
 type WeeklyRewardCoins = Array<number>;
 type WeeklyRewardCoinsTracking = Array<boolean>;
 
+interface WeeklyRewardCoinState {
+    WeeklyRewardCoins: WeeklyRewardCoins,
+    WeeklyRewardCoinsTracking: WeeklyRewardCoinsTracking
+}
+
 interface TakeTodayRewardCoinResult {
     Code: number,
     Message: string,

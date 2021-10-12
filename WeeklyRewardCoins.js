@@ -45,6 +45,9 @@ var WeeklyRewardCoins;
         }
         return trackingData;
     };
+    WeeklyRewardCoins.GetWeeklyRewardCoinState = function () {
+        return { WeeklyRewardCoins: WeeklyRewardCoins.GetWeeklyRewardCoins(), WeeklyRewardCoinsTracking: WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking() };
+    };
     WeeklyRewardCoins.TakeTodayRewardCoin = function () {
         var userTrackingData = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking();
         var todayPos = GetUserLocalizedTimeNow().getDay();
@@ -71,5 +74,6 @@ var WeeklyRewardCoins;
 })(WeeklyRewardCoins || (WeeklyRewardCoins = {}));
 handlers["GetWeeklyRewardCoins"] = WeeklyRewardCoins.GetWeeklyRewardCoins;
 handlers["GetUserWeeklyRewardCoinsTracking"] = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking;
+handlers["GetWeeklyRewardCoinState"] = WeeklyRewardCoins.GetWeeklyRewardCoinState;
 handlers["TakeTodayRewardCoin"] = WeeklyRewardCoins.TakeTodayRewardCoin;
 //# sourceMappingURL=WeeklyRewardCoins.js.map

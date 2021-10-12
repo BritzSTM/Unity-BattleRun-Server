@@ -74,6 +74,11 @@ namespace WeeklyRewardCoins
         return trackingData;
     }
 
+    export var GetWeeklyRewardCoinState = function (): WeeklyRewardCoinState
+    {
+        return { WeeklyRewardCoins: GetWeeklyRewardCoins(), WeeklyRewardCoinsTracking: GetUserWeeklyRewardCoinsTracking() };
+    }
+
     // 오늘의 보상 코인을 획득처리
     export var TakeTodayRewardCoin = function (): TakeTodayRewardCoinResult {
         var userTrackingData: WeeklyRewardCoinsTracking = GetUserWeeklyRewardCoinsTracking();
@@ -107,4 +112,5 @@ namespace WeeklyRewardCoins
 
 handlers["GetWeeklyRewardCoins"] = WeeklyRewardCoins.GetWeeklyRewardCoins;
 handlers["GetUserWeeklyRewardCoinsTracking"] = WeeklyRewardCoins.GetUserWeeklyRewardCoinsTracking;
+handlers["GetWeeklyRewardCoinState"] = WeeklyRewardCoins.GetWeeklyRewardCoinState;
 handlers["TakeTodayRewardCoin"] = WeeklyRewardCoins.TakeTodayRewardCoin;
