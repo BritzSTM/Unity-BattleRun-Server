@@ -51,14 +51,24 @@ namespace WeeklyRewardCoins
 
         var userRODataRes: GetUserDataResult = server.GetUserReadOnlyData(getUserRODataReq);
 
-        // 주간 코인보상 추적목록이 없다면 생성
+        // 추적 테이블의 주간 초기화 조건
+        // 1. 주간 코인보상 추적목록이 없다면 생성
+        // 2. 마지막으로 로그인한 날과의 차이가 8이상이면 테이블을 초기화
+        // 3. 만약 추적 테이블에서 다음날 이후에도 추적한 데이터가 있다면 초기화
         var trackingData: WeeklyRewardCoinsTracking;
-        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY)) {
+        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY) || GetUserDiffDaysFromLastLogin() >= 8) {
             trackingData = new Array<boolean>(7).fill(false);
-            UpdateUserWeeklyRewardCoinsTracking(trackingData);
         }
         else {
             trackingData = JSON.parse(userRODataRes.Data[WEEKLY_REWARD_COIN_TRACKING_KEY].Value);
+            
+            var today: number = GetUserLocalizedTimeNow().getDay();
+            for (var i = today; i < trackingData.length - 1; ++i) {
+                if (trackingData[i + 1] == true) {
+                    trackingData = new Array<boolean>(7).fill(false);
+                    break;
+                }
+            }
         }
 
         return trackingData;

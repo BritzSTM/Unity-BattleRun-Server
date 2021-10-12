@@ -527,18 +527,6 @@ var Achivements;
     };
     const MAX_BITS = 1024;
     const MAX_BITS_STRING = "0".repeat(MAX_BITS);
-    Achivements._testAddAchivements = function () {
-        var set = new BitSet;
-        set.set(64, 1);
-        let formated = ("0".repeat(MAX_BITS) + set.toString()).slice(-1024);
-        var updateUserDataResult = server.UpdateUserReadOnlyData({
-            PlayFabId: currentPlayerId,
-            Permission: "Public",
-            Data: {
-                "_A1": formated
-            }
-        });
-    };
     Achivements.InitAchivements = function (args) {
         var cats = args;
         var datas = {};
@@ -552,6 +540,5 @@ var Achivements;
         });
     };
 })(Achivements || (Achivements = {}));
-handlers["_testAddAchivements"] = Achivements._testAddAchivements;
 handlers["InitAchivements"] = Achivements.InitAchivements;
 //# sourceMappingURL=Achivements.js.map

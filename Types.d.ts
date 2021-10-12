@@ -1,6 +1,9 @@
 /** 유저의 지역화 시간을 반환하는 유틸리티 함수 */
 declare var GetUserLocalizedTimeNow: () => Date;
 
+/** 유저의 지역화 시간에서 마지막으로 로그인 날과의 차이 */
+declare var GetUserDiffDaysFromLastLogin: () => number;
+
 /** 유저가 사용하고 있는 지역화 클라이언트 타입 */
 type LocalizedCountryCode = "GLOBAL" | "KR";
 

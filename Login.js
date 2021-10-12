@@ -43,6 +43,12 @@ var Login;
         }
         return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
     };
+    Login.GetUserDiffDaysFromLastLogin = function () {
+        var trackingData = GetUserLoginTrackingDataOrNull();
+        if (trackingData == null)
+            throw "Login tracking data not found.";
+        return GetDiffDaysFromLastLogin(trackingData);
+    };
     var UpdateUserLocalizedCountry = function (checkInData) {
         var updateUserInternalDataReq = {
             PlayFabId: currentPlayerId,
@@ -104,5 +110,6 @@ var Login;
         return checkInRes;
     };
 })(Login || (Login = {}));
+var GetUserDiffDaysFromLastLogin = Login.GetUserDiffDaysFromLastLogin;
 handlers["CheckInUser"] = Login.CheckIn;
 //# sourceMappingURL=Login.js.map

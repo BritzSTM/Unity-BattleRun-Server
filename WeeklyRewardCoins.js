@@ -30,12 +30,18 @@ var WeeklyRewardCoins;
         };
         var userRODataRes = server.GetUserReadOnlyData(getUserRODataReq);
         var trackingData;
-        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY)) {
+        if (!userRODataRes.Data.hasOwnProperty(WEEKLY_REWARD_COIN_TRACKING_KEY) || GetUserDiffDaysFromLastLogin() >= 8) {
             trackingData = new Array(7).fill(false);
-            UpdateUserWeeklyRewardCoinsTracking(trackingData);
         }
         else {
             trackingData = JSON.parse(userRODataRes.Data[WEEKLY_REWARD_COIN_TRACKING_KEY].Value);
+            var today = GetUserLocalizedTimeNow().getDay();
+            for (var i = today; i < trackingData.length - 1; ++i) {
+                if (trackingData[i + 1] == true) {
+                    trackingData = new Array(7).fill(false);
+                    break;
+                }
+            }
         }
         return trackingData;
     };

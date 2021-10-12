@@ -66,6 +66,14 @@ namespace Login {
         return JSON.parse(userRODataRes.Data[LOGIN_TRACKING_KEY].Value);
     }
 
+    export var GetUserDiffDaysFromLastLogin = function (): number {
+        var trackingData: LoginTracking = GetUserLoginTrackingDataOrNull();
+        if (trackingData == null)
+            throw "Login tracking data not found.";
+        
+        return GetDiffDaysFromLastLogin(trackingData);
+    }
+
     var UpdateUserLocalizedCountry = function (checkInData: ClientCheckInData): void {
         var updateUserInternalDataReq: UpdateUserDataRequest = {
             PlayFabId: currentPlayerId,
@@ -148,4 +156,5 @@ namespace Login {
     }
 }
 
+var GetUserDiffDaysFromLastLogin = Login.GetUserDiffDaysFromLastLogin;
 handlers["CheckInUser"] = Login.CheckIn;
