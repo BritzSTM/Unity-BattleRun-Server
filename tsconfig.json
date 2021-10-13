@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "lib": [ "es6", "es5", "es7", "ES2017" ],
+    "noEmitOnError": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "target": "ES2017"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
