@@ -28,9 +28,10 @@ interface ClientCheckInData {
 }
 
 interface LoginTracking {
+    PrevLastLogin: Date,
+    LastLogin: Date,
     TotalLoginCount: number,
-    ContinuousLoginCount: number,
-    LastLogin: Date
+    ContinuousLoginCount: number
 }
 
 interface CheckInResult {

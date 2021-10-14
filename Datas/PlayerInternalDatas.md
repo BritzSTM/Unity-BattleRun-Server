@@ -1,4 +1,4 @@
-# TitleInternalDatas.json의 구조를 설명하기 위한 마크업 파일
+# PlayerInternalDatas.json의 구조를 설명하기 위한 마크업 파일
 
 ## LocalizedCountry
 - 사용자가 플레이중인 클라이언트 지역버전을 의미

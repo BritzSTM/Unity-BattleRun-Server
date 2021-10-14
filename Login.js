@@ -4,6 +4,7 @@ var Login;
     const LOCALIZED_COUNTRY_KEY = "LocalizedCountry";
     var CreateLoginTrackingData = function () {
         var ltData = {
+            PrevLastLogin: GetUserLocalizedTimeNow(),
             LastLogin: GetUserLocalizedTimeNow(),
             TotalLoginCount: 1,
             ContinuousLoginCount: 1,
@@ -14,7 +15,7 @@ var Login;
         var updateUserRODataReq = {
             PlayFabId: currentPlayerId,
             Data: {},
-            Permission: "Private"
+            Permission: "Public"
         };
         updateUserRODataReq.Data[LOGIN_TRACKING_KEY] = JSON.stringify(data);
         server.UpdateUserReadOnlyData(updateUserRODataReq);
@@ -99,6 +100,7 @@ var Login;
             else
                 loginTrackingData.ContinuousLoginCount = 1;
         }
+        loginTrackingData.PrevLastLogin = loginTrackingData.LastLogin;
         loginTrackingData.LastLogin = GetUserLocalizedTimeNow();
         UpdateLoginTrackingData(loginTrackingData);
         var checkInRes = { Code: 0, Message: "Succeed login.", FirstLogin: false };

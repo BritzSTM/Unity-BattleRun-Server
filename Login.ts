@@ -14,6 +14,7 @@ namespace Login {
 
     var CreateLoginTrackingData = function (): LoginTracking {
         var ltData: LoginTracking = {
+            PrevLastLogin: GetUserLocalizedTimeNow(),
             LastLogin: GetUserLocalizedTimeNow(),
             TotalLoginCount: 1,
             ContinuousLoginCount: 1,
@@ -26,7 +27,7 @@ namespace Login {
         var updateUserRODataReq: UpdateUserDataRequest = {
             PlayFabId: currentPlayerId,
             Data: {},
-            Permission: "Private"
+            Permission: "Public"
         }
         updateUserRODataReq.Data[LOGIN_TRACKING_KEY] = JSON.stringify(data);
 
@@ -141,9 +142,9 @@ namespace Login {
             else
                 loginTrackingData.ContinuousLoginCount = 1;
         }
+        loginTrackingData.PrevLastLogin = loginTrackingData.LastLogin;
         loginTrackingData.LastLogin = GetUserLocalizedTimeNow();
         UpdateLoginTrackingData(loginTrackingData);
-
                 
         var checkInRes: CheckInResult = { Code: 0, Message: "Succeed login.", FirstLogin: false };
         server.WritePlayerEvent({
